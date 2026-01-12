@@ -1,0 +1,103 @@
+--- VSCode Extensions ---
+
+Python (Microsoft)
+
+Pylance - language server for autocomplete etc. QOL
+
+ESLint - code analysis for JS, for helping to find and fix errors and style inconsistencies
+
+Prettier - code formatter for consistent code styles
+
+Docker
+
+--- Backend ---
+
+fastapi - high-performance web framework for building HTTP-based service APIs in Python 3.8+. It uses Pydantic and type hints to validate, serialize and deserialize data. FastAPI also automatically generates OpenAPI documentation for APIs built with it
+    Registers routes
+    Handles HTTP
+    Serializes JSON
+    Runs app
+
+uvicorn - fast, lightweight Asynchronous Server Gateway Interface for running modern async web apps and APIs. Bridge between python code and the web
+
+python-chess - Python library for features like legal move generation, board state management and support for common chess formats (PGN, FEN, EPD)
+
+--- to install ---
+
+backend:
+
+# 1. Go to backend folder
+cd backend
+
+# 2. Create the virtual environment
+python -m venv .venv
+
+# 3. Activate the venv (PowerShell)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+
+# 4. Install required Python packages
+pip install -r requirements.txt
+
+frontend:
+
+# 1. Go to frontend folder
+cd frontend
+
+# 2. Create Vite React+TypeScript project
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+npm create vite@latest
+    name:
+    React
+    TypeScript
+
+# 3. Go to frontend *project* folder
+cd frontend\chess-frontend
+
+# 3. Install chess-related packages
+npm install react-chessboard chess.js @types/chess.js
+
+# 4. Test suite (Vitest)
+cd frontend\chess-frontend
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+npm install --save-dev vitest @vitest/ui jsdom
+npm install --save-dev vite-tsconfig-paths
+npm install --save-dev @testing-library/react @testing-library/user-event
+npm install --save-dev @testing-library/jest-dom
+npm i -D @types/testing-library__jest-dom
+
+# 5. For testing on commit and preventing commit on fail
+npm install -D husky
+npx husky install
+
+--- to run ---
+
+backend:
+
+new terminal
+
+# 1. Go to backend folder
+cd backend
+
+# 2. Activate venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+
+# 3. Run backend server
+uvicorn main:app --reload
+
+frontend:
+
+new terminal
+
+# 1. Go to frontend *project* folder
+cd frontend/chess-frontend
+
+# 2. Start frontend dev server
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+npm run dev
+
+--- to test ---
+cd frontend/chess-frontend
+npm test
+npm run test:ui
