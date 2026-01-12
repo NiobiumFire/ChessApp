@@ -68,7 +68,7 @@ npm i -D @types/testing-library__jest-dom
 
 # 5. For testing on commit and preventing commit on fail
 npm install -D husky
-npx husky install
+npx husky init
 
 --- to run ---
 
@@ -101,3 +101,8 @@ npm run dev
 cd frontend/chess-frontend
 npm test
 npm run test:ui
+
+--- test on commit ---
+cd frontend/chess-frontend
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+echo "npm test" > .husky/pre-commit
