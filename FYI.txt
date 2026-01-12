@@ -66,7 +66,7 @@ npm install --save-dev @testing-library/react @testing-library/user-event
 npm install --save-dev @testing-library/jest-dom
 npm i -D @types/testing-library__jest-dom
 
-# 5. For testing on commit and preventing commit on fail
+# 5. For testing on commit and preventing commit on fail, from the <root> directory
 npm install -D husky
 npx husky init
 
@@ -102,7 +102,7 @@ cd frontend/chess-frontend
 npm test
 npm run test:ui
 
---- test on commit ---
-cd frontend/chess-frontend
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-echo "npm test" > .husky/pre-commit
+--- git ---
+commit: git commit -m "<commit message>"
+undo commit: git reset --soft HEAD~1
+push: git push -u origin main
