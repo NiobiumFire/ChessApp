@@ -1,4 +1,4 @@
 export type GameDetail = {
     gameNumber: number;
-    colour: 'white' | 'black';
+    colour: 'w' | 'b';
 };

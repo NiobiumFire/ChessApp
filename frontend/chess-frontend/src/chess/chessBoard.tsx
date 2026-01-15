@@ -1,20 +1,116 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import type { CSSProperties } from "react";
-import { Chessboard } from 'react-chessboard';
+import { Chessboard } from "react-chessboard";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import type { Square } from "chess.js";
 import { getCheckSquareStyle, getMoveSquareStyle } from "@chess/squareStyles";
 import { ChessGame } from "@chess/chessGame";
 import type { GameDetail } from "@chess/gameDetail";
 
-export function ChessBoard({ gameDetail, setStatus } : { gameDetail: GameDetail, setStatus: (status: string) => void }) {
+export function ChessBoard({
+  gameDetail,
+  setStatus,
+}: {
+  gameDetail: GameDetail;
+  setStatus: (status: string) => void;
+}) {
   const chessGame = useRef<ChessGame | null>(null);
+  const enginePending = useRef(false);
   const [chessPosition, setChessPosition] = useState<string>();
-  const [orientation, setOrientation] = useState<'white' | 'black'>('white');
-  const [checkSquareStyle, setCheckSquareStyle] = useState<Record<string, CSSProperties>>({});
-  const [lastMoveSquareStyle, setLastMoveSquareStyle] = useState<Record<string, CSSProperties>>({});
-  const [currentMoveSquareStyle, setCurrentMoveSquareStyle] = useState<Record<string, CSSProperties>>({});
+  const [orientation, setOrientation] = useState<"w" | "b">("w");
+  const [checkSquareStyle, setCheckSquareStyle] = useState<
+    Record<string, CSSProperties>
+  >({});
+  const [lastMoveSquareStyle, setLastMoveSquareStyle] = useState<
+    Record<string, CSSProperties>
+  >({});
+  const [currentMoveSquareStyle, setCurrentMoveSquareStyle] = useState<
+    Record<string, CSSProperties>
+  >({});
+  const [allowDragging, setAllowDragging] = useState(true);
   //const [validMoveSquareStyle, setValidMoveSquareStyle] = useState<Record<string, CSSProperties>>({});
+
+  const tryMove = useCallback(
+    (from: Square, to: Square, promotionPiece: string | null): boolean => {
+      if (!from || !to) return false;
+
+      if (!chessGame.current) return false;
+
+      const moveResult = chessGame.current.move(from, to, promotionPiece);
+
+      if (!moveResult || !moveResult.success) return false;
+
+      if (moveResult.checkSquare !== undefined)
+        setCheckSquareStyle(getCheckSquareStyle(moveResult.checkSquare));
+
+      setLastMoveSquareStyle(getMoveSquareStyle(from));
+      setCurrentMoveSquareStyle(getMoveSquareStyle(to));
+
+      //const validMoves = chessGame.moves({square: sourceSquare as Square, verbose: true });
+      //const validSquares = validMoves.map(m => m.to as Square);
+      //updateValidMoveSquareStyle(validSquares as Square[]);
+
+      if (moveResult.status !== undefined) setStatus(moveResult.status);
+
+      setChessPosition(chessGame.current.getFEN());
+
+      return true;
+    },
+    [
+      setLastMoveSquareStyle,
+      setCurrentMoveSquareStyle,
+      setStatus,
+      setChessPosition,
+    ]
+  );
+
+  const requestEngineMove = useCallback(async () => {
+    if (!chessGame.current) return;
+
+    if (chessGame.current.getTurn() === gameDetail.colour) return;
+
+    try {
+      const fen = encodeURIComponent(chessGame.current.getFEN());
+      const response = await fetch(
+        `http://127.0.0.1:8000/random-move?fen=${fen}`,
+        { method: "GET" }
+      );
+
+      if (!response.ok) {
+        console.error("Engine error:", await response.text());
+        return;
+      }
+
+      const move = await response.json();
+
+      if (move?.promotion && !['n','b','r','q'].includes(move.promotion)) {
+        throw new Error(`Invalid promotion value from engine: ${move.promotion}`);
+      }
+
+      await new Promise((res) => setTimeout(res, 500)); // add small delay
+      tryMove(move.from, move.to, move.promotion);
+    } catch (err) {
+      console.error("Engine move failed:", err);
+    }
+  }, [gameDetail.colour, tryMove]);
+
+  // drag and drop piece to move
+  const handleDrop = useCallback(
+    (args: PieceDropHandlerArgs): boolean => {
+      const { sourceSquare, targetSquare } = args;
+
+      if (!sourceSquare || !targetSquare) return false;
+
+      const from = sourceSquare as Square;
+      const to = targetSquare as Square;
+
+      const result = tryMove(from, to, null);
+      setAllowDragging(!result);
+
+      return result;
+    },
+    [tryMove]
+  );
 
   // reset game and board
   useEffect(() => {
@@ -24,73 +120,56 @@ export function ChessBoard({ gameDetail, setStatus } : { gameDetail: GameDetail,
     setLastMoveSquareStyle({});
     setCurrentMoveSquareStyle({});
     setOrientation(gameDetail.colour);
-    setStatus('In Progress');
-    console.log("test");
+    setStatus("In Progress");
+    setAllowDragging(gameDetail.colour == "w");
   }, [gameDetail, setStatus]);
 
-  const tryMove = useCallback((from: Square, to: Square) : boolean => {
-    if (!from || !to) return false;
+  // call the engine
+  useEffect(() => {
+    if (!chessGame.current) return;
+    if (chessGame.current.gameIsOver()) return;
+    if (
+      chessGame.current.getTurn() !== gameDetail.colour &&
+      !enginePending.current
+    ) {
+      enginePending.current = true;
+      requestEngineMove().finally(() => {
+        enginePending.current = false;
+        setAllowDragging(true);
+      });
+    }
+  }, [gameDetail.colour, requestEngineMove, chessPosition]);
 
-    if (!chessGame.current) return false;
-
-    const moveResult = chessGame.current?.move(from, to, true);
-
-    if (!moveResult || !moveResult.success) return false;
-
-    if (moveResult.checkSquare !== undefined) setCheckSquareStyle(getCheckSquareStyle(moveResult.checkSquare));
-    setLastMoveSquareStyle(getMoveSquareStyle(from));
-    setCurrentMoveSquareStyle(getMoveSquareStyle(to));
-
-    //const validMoves = chessGame.moves({square: sourceSquare as Square, verbose: true });
-    //const validSquares = validMoves.map(m => m.to as Square);
-    //updateValidMoveSquareStyle(validSquares as Square[]);
-
-    if (moveResult.status !== undefined) setStatus(moveResult.status);
-
-    setChessPosition(chessGame.current.getFEN());
-    return true;
-  }, [setLastMoveSquareStyle, setCurrentMoveSquareStyle, setStatus, setChessPosition]);
-
-  // drag and drop piece to move
-  const handleDrop = useCallback(
-    (args: PieceDropHandlerArgs): boolean => {
-        const { sourceSquare, targetSquare } = args;
-
-        if (!sourceSquare || !targetSquare) return false;
-
-        const from = sourceSquare as Square;
-        const to = targetSquare as Square;
-
-        return tryMove(from, to);
-    },
-      [tryMove]
+  const customSquareStyles = useMemo(
+    () => ({
+      ...checkSquareStyle,
+      ...lastMoveSquareStyle,
+      ...currentMoveSquareStyle,
+      //...validMoveSquareStyle
+    }),
+    [checkSquareStyle, lastMoveSquareStyle, currentMoveSquareStyle]
   );
 
-  const customSquareStyles = useMemo(() => ({
-    ...checkSquareStyle,
-    ...lastMoveSquareStyle,
-    ...currentMoveSquareStyle,
-    //...validMoveSquareStyle
-  }), [checkSquareStyle, lastMoveSquareStyle, currentMoveSquareStyle]);
-
-
-  const chessboardOptions = useMemo(() => ({
-    boardStyle: {
-      backgroundColor: "#258f2eff",
-    },
-    darkSquareStyle: { backgroundColor: "#769656" },
-    lightSquareStyle: { backgroundColor: "#eeeed2" },
-    position: chessPosition,
-    onPieceDrop: handleDrop,
-    squareStyles: customSquareStyles,
-    boardOrientation: orientation,
-  }), [chessPosition, handleDrop, customSquareStyles, orientation]);
+  const chessboardOptions = useMemo(
+    () => ({
+      boardStyle: {
+        backgroundColor: "#258f2eff",
+      },
+      darkSquareStyle: { backgroundColor: "#769656" },
+      lightSquareStyle: { backgroundColor: "#eeeed2" },
+      position: chessPosition,
+      onPieceDrop: handleDrop,
+      squareStyles: customSquareStyles,
+      boardOrientation:
+        orientation === "w" ? "white" : ("black" as "white" | "black"),
+      allowDragging: allowDragging,
+    }),
+    [chessPosition, handleDrop, customSquareStyles, orientation, allowDragging]
+  );
 
   return (
     <div className="chessboard-style">
-      <Chessboard
-        options = {chessboardOptions}
-      />
+      <Chessboard options={chessboardOptions} />
     </div>
   );
-};
+}

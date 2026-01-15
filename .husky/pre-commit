@@ -1,2 +1,2 @@
 cd "$(dirname "$0")/../frontend/chess-frontend" || exit 1
-npm test || exit 1
+npm.cmd test || exit 1

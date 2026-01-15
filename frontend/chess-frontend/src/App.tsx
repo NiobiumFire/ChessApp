@@ -5,12 +5,12 @@ import { ChessBoard } from "@chess/chessBoard";
 import type { GameDetail } from "@chess/gameDetail";
 
 export default function App() {
-  const [gameDetail, setGameDetail] = useState<GameDetail>({ gameNumber : 0, colour : 'white' });
+  const [gameDetail, setGameDetail] = useState<GameDetail>({ gameNumber : 0, colour : 'w' });
   const [gameStatus, setGameStatus] = useState('In Progress');
 
-  function newGame(colour : 'white' | 'black' | 'r') {
+  function newGame(colour : 'w' | 'b' | 'r') {
     if (colour === 'r'){
-      colour = Math.random() < 0.5 ? 'white' : 'black';
+      colour = Math.random() < 0.5 ? 'w' : 'b';
     }
 
     setGameDetail(prev => ({ 
@@ -30,9 +30,9 @@ export default function App() {
         <div className="info-panel">
           <p>New Game</p>
           <div className="new-game-buttons">
-            <button onClick={() => newGame('white')}>White</button>
+            <button onClick={() => newGame('w')}>White</button>
             <button onClick={() => newGame('r')}>Random</button>
-            <button onClick={() => newGame('black')}>Black</button>
+            <button onClick={() => newGame('b')}>Black</button>
           </div>
           <hr />
           <p>Status: { gameStatus }</p>

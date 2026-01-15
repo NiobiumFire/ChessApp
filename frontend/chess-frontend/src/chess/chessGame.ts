@@ -21,17 +21,28 @@ export class ChessGame {
     return this.game.fen();
   }
 
-  move(from: Square, to: Square, promptPromotion = true): MoveResult {
+  getTurn(): string {
+    return this.game.turn();
+  }
+
+  gameIsOver(): boolean {
+    return this.game.isGameOver();
+  }
+
+  move(from: Square, to: Square, promotionPiece: string | null = null): MoveResult {
     if (this.game.isGameOver()) return { success: false };
 
     const piece = this.game.get(from);
     if (!piece) return { success: false };
 
     let promotion: Promotion | undefined;
-    if (promptPromotion) {
+    if (promotionPiece === null) {
       const result = getPromotionPiece(piece, to);
-      if (result === null) return { success: false }; // cancelled
+      if (result === null) return { success: false }; // cancelled for null, undefined if no promotion needed
       promotion = result;
+    }
+    else{
+      promotion = promotionPiece as Promotion;
     }
 
     try {

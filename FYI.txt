@@ -103,6 +103,7 @@ npm test
 npm run test:ui
 
 --- git ---
+add: git add .
 commit: git commit -m "<commit message>"
 undo commit: git reset --soft HEAD~1
 push: git push -u origin main

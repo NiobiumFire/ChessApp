@@ -28,6 +28,7 @@ vi.mock('@chess/chessGame', () => {
   return {
     ChessGame: class {
       getFEN = vi.fn(() => 'initial-fen');
+      gameIsOver = vi.fn(() => 'false');
       move = vi.fn(() => ({
         success: true,
         fen: 'after-move-fen',
@@ -42,7 +43,7 @@ vi.mock('@chess/chessGame', () => {
 });
 
 describe('ChessBoard', () => {
-  const gameDetail = { gameNumber: 0, colour: 'white' } as GameDetail;
+  const gameDetail = { gameNumber: 0, colour: 'w' } as GameDetail;
   const setStatus = vi.fn();
 
   beforeEach(() => {
@@ -86,7 +87,7 @@ describe('ChessBoard', () => {
       move: ReturnType<typeof vi.fn>;
     };
     expect(createdChessGame).not.toBeNull();
-    expect(instance.move).toHaveBeenCalledWith('e2', 'e4', true);
+    expect(instance.move).toHaveBeenCalledWith('e2', 'e4', null);
 
     // Status should be updated
     expect(setStatus).toHaveBeenCalledTimes(1);
