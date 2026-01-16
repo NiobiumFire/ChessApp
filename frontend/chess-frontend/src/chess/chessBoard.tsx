@@ -73,7 +73,7 @@ export function ChessBoard({
       const fen = chessGame.current.getFEN();
       const body = {
         fen: fen,
-        skill_level: 5
+        skill_level: gameDetail.skillLevel
       };
 
       const BACKEND_URL = import.meta.env.VITE_CHESSAPP_BACKEND_URL;
@@ -102,7 +102,7 @@ export function ChessBoard({
     } catch (err) {
       console.error("Engine move failed:", err);
     }
-  }, [gameDetail.colour, tryMove]);
+  }, [gameDetail.colour, gameDetail.skillLevel, tryMove]);
 
   // drag and drop piece to move
   const handleDrop = useCallback(
@@ -132,7 +132,7 @@ export function ChessBoard({
     setOrientation(gameDetail.colour);
     setStatus("In Progress");
     setAllowDragging(gameDetail.colour == "w");
-  }, [gameDetail, setStatus]);
+  }, [gameDetail.gameNumber, gameDetail.colour, setStatus]);
 
   // call the engine
   useEffect(() => {

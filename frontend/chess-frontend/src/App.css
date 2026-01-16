@@ -60,3 +60,30 @@ hr {
   margin: 0.5rem 0;
   color: white;
 }
+
+.skill-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 200px;
+  height: 6px; /* track height */
+  background: lightgray;
+  border-radius: 3px;
+}
+
+/* Track */
+.skill-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: lightgray;
+  border-radius: 3px;
+}
+
+/* Thumb */
+.skill-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* remove default styling */
+  width: 16px;
+  height: 16px;
+  background: var(--main-bg-color);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -5px; /* centers thumb on track */
+}

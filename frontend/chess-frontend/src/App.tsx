@@ -5,17 +5,17 @@ import { ChessBoard } from "@chess/chessBoard";
 import type { GameDetail } from "@chess/gameDetail";
 
 export default function App() {
-  const [gameDetail, setGameDetail] = useState<GameDetail>({ gameNumber : 0, colour : 'w' });
+  const [gameDetail, setGameDetail] = useState<GameDetail>({ gameNumber : 0, colour : 'w', skillLevel: 4 });
   const [gameStatus, setGameStatus] = useState('In Progress');
 
-  function newGame(colour : 'w' | 'b' | 'r') {
-    if (colour === 'r'){
-      colour = Math.random() < 0.5 ? 'w' : 'b';
-    }
+  function newGame(newColour: 'w' | 'b') {
+    updateGame({ colour: newColour, gameNumber: gameDetail.gameNumber + 1 });
+  }
 
-    setGameDetail(prev => ({ 
-      gameNumber: prev.gameNumber + 1,
-      colour,
+  function updateGame(detail: Partial<GameDetail>) {
+    setGameDetail(prev => ({
+      ...prev,
+      ...detail
     }));
   }
 
@@ -31,9 +31,12 @@ export default function App() {
           <p>New Game</p>
           <div className="new-game-buttons">
             <button onClick={() => newGame('w')}>White</button>
-            <button onClick={() => newGame('r')}>Random</button>
+            <button onClick={() => newGame(Math.random() < 0.5 ? 'w' : 'b')}>Random</button>
             <button onClick={() => newGame('b')}>Black</button>
           </div>
+          <hr />
+          <p>AI Skill: {gameDetail.skillLevel}</p>
+          <input className="skill-slider" type="range" id="skill" name="skill" min="-1" max="20" value={gameDetail.skillLevel} onChange={(e) => updateGame({ skillLevel: Number(e.target.value) })} />
           <hr />
           <p>Status: { gameStatus }</p>
         </div>
