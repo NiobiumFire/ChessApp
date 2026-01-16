@@ -70,11 +70,19 @@ export function ChessBoard({
     if (chessGame.current.getTurn() === gameDetail.colour) return;
 
     try {
-      const fen = encodeURIComponent(chessGame.current.getFEN());
-      const response = await fetch(
-        `http://127.0.0.1:8000/random-move?fen=${fen}`,
-        { method: "GET" }
-      );
+      const fen = chessGame.current.getFEN();
+      const body = {
+        fen: fen,
+        skill_level: 5
+      };
+
+      const response = await fetch("http://127.0.0.1:8000/engine-move", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
 
       if (!response.ok) {
         console.error("Engine error:", await response.text());
@@ -127,17 +135,25 @@ export function ChessBoard({
   // call the engine
   useEffect(() => {
     if (!chessGame.current) return;
-    if (chessGame.current.gameIsOver()) return;
-    if (
-      chessGame.current.getTurn() !== gameDetail.colour &&
-      !enginePending.current
-    ) {
-      enginePending.current = true;
-      requestEngineMove().finally(() => {
-        enginePending.current = false;
-        setAllowDragging(true);
-      });
+    if (chessGame.current.gameIsOver()) {
+      setAllowDragging(false);
+      return;
     }
+    if (chessGame.current.getTurn() === gameDetail.colour || enginePending.current) return;
+      
+    let cancelled = false;
+    enginePending.current = true;
+
+    requestEngineMove().finally(() => {
+      enginePending.current = false;
+      if (!cancelled && chessGame.current) {
+        setAllowDragging(!chessGame.current!.gameIsOver());
+      }
+    });
+    
+    return () => { // prevent possible state update after unmount during engine request
+      cancelled = true;
+    };
   }, [gameDetail.colour, requestEngineMove, chessPosition]);
 
   const customSquareStyles = useMemo(
