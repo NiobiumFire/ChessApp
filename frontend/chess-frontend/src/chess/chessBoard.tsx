@@ -76,7 +76,9 @@ export function ChessBoard({
         skill_level: 5
       };
 
-      const response = await fetch("http://127.0.0.1:8000/engine-move", {
+      const BACKEND_URL = import.meta.env.VITE_CHESSAPP_BACKEND_URL;
+
+      const response = await fetch(`${BACKEND_URL}/engine-move`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

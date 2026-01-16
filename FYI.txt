@@ -70,6 +70,8 @@ npm i -D @types/testing-library__jest-dom
 npm install -D husky
 npx husky init
 
+# 6. Set VITE_CHESSAPP_BACKEND_URL environment variable
+
 --- to run ---
 
 backend:
@@ -77,13 +79,12 @@ backend:
 new terminal
 
 # 1. Go to backend folder
-cd backend
-
 # 2. Activate venv
+# 3. Run backend server
+
+cd backend
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
-
-# 3. Run backend server
 uvicorn main:app --reload
 
 frontend:
@@ -91,14 +92,15 @@ frontend:
 new terminal
 
 # 1. Go to frontend *project* folder
-cd frontend/chess-frontend
-
 # 2. Start frontend dev server
+
+cd frontend/chess-frontend
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm run dev
 
 --- to test ---
 cd frontend/chess-frontend
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm test
 npm run test:ui
 
