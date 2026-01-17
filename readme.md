@@ -26,6 +26,7 @@ The frontend is built with React + TypeScript, and the backend uses Python + Fas
 - uvicorn – ASGI server
 - python-chess – chess rules, board state, formats
 - Stockfish – chess engine
+- Pytest – backend unit testing
 
 ## 🧑‍💻 Recommended VS Code Extensions
 - Python (Microsoft)
@@ -35,21 +36,6 @@ The frontend is built with React + TypeScript, and the backend uses Python + Fas
 - Docker – for future containerization
 
 ## ⚙️ Setup & Installation
-### Backend Setup
-```
-cd backend
-
-# Create virtual environment
-python -m venv .venv
-
-# Activate venv (PowerShell)
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
 ### Frontend Setup
 ```
 cd frontend
@@ -73,10 +59,23 @@ npm install react-chessboard chess.js @types/chess.js
 npm install --save-dev vitest @vitest/ui jsdom
 npm install --save-dev vite-tsconfig-paths
 npm install --save-dev @testing-library/react @testing-library/user-event
-npm install --save-dev @testing-library/jest-dom
-npm i -D @types/testing-library__jest-dom
+npm install --save-dev @testing-library/jest-dom @types/testing-library__jest-dom
 ```
 
+### Backend Setup
+```
+cd backend
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate venv (PowerShell)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+
+# Install dependencies
+pip install -r requirements.txt
+```
 ### Git Hooks (Optional)
 For preventing commits on failed tests. Run from the repository root:
 ```
@@ -111,12 +110,15 @@ The API will be available at http://localhost:8000.
 ## 🧪 Testing
 ### Frontend Tests
 ```
-cd frontend
+cd frontend/chess-frontend
 npm run test
 ```
 
 ### Backend Tests
-Backend tests are not implemented yet.
+```
+cd backend
+./.venv/Scripts/python.exe -m pytest
+```
 
 ## ❌ Not Included (By Design)
 
@@ -128,7 +130,6 @@ This project is intentionally focused on single-player chess vs computer.
 
 ## 🐳 Future Improvements
 - Dockerize frontend and backend
-- Backend unit and integration tests
 - Improved AI configuration (time controls, depth settings)
 - UI/UX polish
 - Game analysis
