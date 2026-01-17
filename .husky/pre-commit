@@ -1,2 +1,16 @@
-cd "$(dirname "$0")/../frontend/chess-frontend" || exit 1
-npm.cmd test || exit 1
+#!/bin/sh
+set -e  # Exit immediately if any command fails
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+echo "Running backend tests"
+cd "$ROOT_DIR/backend" || exit 1
+if [ -f ".venv/Scripts/python.exe" ]; then
+  ./.venv/Scripts/python.exe -m pytest
+else
+  .venv/bin/python -m pytest
+fi
+
+echo "Running frontend tests"
+cd "$ROOT_DIR/frontend/chess-frontend" || exit 1
+npm.cmd test

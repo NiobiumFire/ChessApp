@@ -1,4 +1,4 @@
---- VSCode Extensions ---
+------ VSCode Extensions ------
 
 Python (Microsoft)
 
@@ -10,7 +10,7 @@ Prettier - code formatter for consistent code styles
 
 Docker
 
---- Backend ---
+------ Backend ------
 
 fastapi - high-performance web framework for building HTTP-based service APIs in Python 3.8+. It uses Pydantic and type hints to validate, serialize and deserialize data. FastAPI also automatically generates OpenAPI documentation for APIs built with it
     Registers routes
@@ -22,7 +22,7 @@ uvicorn - fast, lightweight Asynchronous Server Gateway Interface for running mo
 
 python-chess - Python library for features like legal move generation, board state management and support for common chess formats (PGN, FEN, EPD)
 
---- to install ---
+------ to install ------
 
 backend:
 
@@ -38,6 +38,10 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 # 4. Install required Python packages
 pip install -r requirements.txt
+
+# 5. Test Suite (pytest) - run from backend folder, after venv activated
+pip install pytest
+pip install httpx
 
 frontend:
 
@@ -72,7 +76,7 @@ npx husky init
 
 # 6. Set VITE_CHESSAPP_BACKEND_URL environment variable
 
---- to run ---
+------ to run ------
 
 backend:
 
@@ -98,13 +102,28 @@ cd frontend/chess-frontend
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm run dev
 
---- to test ---
+------ to test ------
+
+backend:
+
+cd backend
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+pytest
+
+frontend:
+
 cd frontend/chess-frontend
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm test
+
 npm run test:ui
 
---- git ---
+Test the tests:
+from project root
+git commit --allow-empty -m "test"
+
+------ git ------
 add: git add .
 commit: git commit -m "<commit message>"
 undo commit: git reset --soft HEAD~1
