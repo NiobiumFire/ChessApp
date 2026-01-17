@@ -186,8 +186,6 @@ export function ChessBoard({
   );
 
   return (
-    <div className="chessboard-style">
       <Chessboard options={chessboardOptions} />
-    </div>
   );
 }

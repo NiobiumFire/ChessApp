@@ -24,7 +24,7 @@ export default function App() {
       <h1 className="header" >NiobiumFire Chess</h1>
       <div className="h-container">
         <div></div>
-        <div>
+        <div className="chessboard-style">
           <ChessBoard gameDetail = { gameDetail } setStatus = { setGameStatus }/>
         </div>
         <div className="info-panel">
