@@ -36,12 +36,8 @@ python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 
-# 4. Install required Python packages
+# 4. Install required Python packages in the venv
 pip install -r requirements.txt
-
-# 5. Test Suite (pytest) - run from backend folder, after venv activated
-pip install pytest
-pip install httpx
 
 frontend:
 
@@ -67,8 +63,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm install --save-dev vitest @vitest/ui jsdom
 npm install --save-dev vite-tsconfig-paths
 npm install --save-dev @testing-library/react @testing-library/user-event
-npm install --save-dev @testing-library/jest-dom
-npm i -D @types/testing-library__jest-dom
+npm install --save-dev @testing-library/jest-dom @types/testing-library__jest-dom
 
 # 5. For testing on commit and preventing commit on fail, from the <root> directory
 npm install -D husky
@@ -110,6 +105,11 @@ cd backend
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 pytest
+
+or
+
+cd backend
+./.venv/Scripts/python.exe -m pytest
 
 frontend:
 
