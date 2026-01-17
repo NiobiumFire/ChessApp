@@ -11,4 +11,4 @@
 *.md text eol=lf
 
 # Ignore Stockfish for language statistics
-stockfish/** linguist-vendored
+backend/stockfish/** linguist-vendored
