@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from chessLogic import EngineMoveRequest, make_move
+from chess_logic import EngineMoveRequest, make_move
 
 app = FastAPI()
 

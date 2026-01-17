@@ -35,7 +35,7 @@ def make_move(engine_move_request: EngineMoveRequest):
     
     moves = list(board.legal_moves)
     if not moves:
-        raise ValueError("No legal moves")
+        raise ValueError("No legal moves") # this should basically never raise if we assume python_chess will correctly evaluate valid fen and game-over states, but wil lleave in to be conservative. Not unit tested.
 
     if engine_move_request.skill_level == -1:
         move = random.choice(moves)

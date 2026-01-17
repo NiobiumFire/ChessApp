@@ -125,6 +125,10 @@ git commit --allow-empty -m "test"
 
 ------ git ------
 add: git add .
+unstage: git restore --staged .
 commit: git commit -m "<commit message>"
 undo commit: git reset --soft HEAD~1
 push: git push -u origin main
+see last 10 commits: git log --oneline --decorate --graph -n 10
+see configured hooks path: git config --get core.hooksPath
+set hooks path: git config core.hooksPath .husky
