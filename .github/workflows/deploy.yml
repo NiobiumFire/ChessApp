@@ -33,9 +33,9 @@ jobs:
         with:
           name: python-app
           path: |
-            .
-            !frontend/chess-frontend/node_modules
-            !backend/.venv
+            backend
+            frontend/chess-frontend/dist
+            startup.sh
 
   deploy:
     runs-on: ubuntu-latest
