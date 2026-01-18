@@ -132,3 +132,11 @@ push: git push -u origin main
 see last 10 commits: git log --oneline --decorate --graph -n 10
 see configured hooks path: git config --get core.hooksPath
 set hooks path: git config core.hooksPath .husky
+
+------ deploy ------
+# 1. Create frontend build
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\build_frontend.ps1
+# 2. Entire app served from fastAPI / backend
+
+# 3. Azure startup command: /home/site/wwwroot/startup.sh

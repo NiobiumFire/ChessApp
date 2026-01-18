@@ -3,10 +3,14 @@ import chess.engine
 from pydantic import BaseModel
 import os
 import random
+import platform
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-STOCKFISH_PATH = os.path.join(BASE_DIR, "stockfish", "stockfish.exe")
+if platform.system() == "Windows":
+    STOCKFISH_PATH = os.path.join(BASE_DIR, "stockfish", "stockfish-win", "stockfish.exe")
+else:
+    STOCKFISH_PATH = os.path.join(BASE_DIR, "stockfish", "stockfish-linux", "stockfish-linux")
 
 #engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) # use engine per request so as not to have a long running engine in Azure App Service
 
