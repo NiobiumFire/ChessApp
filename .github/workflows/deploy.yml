@@ -1,0 +1,41 @@
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build frontend
+        run: |
+          cd frontend/chess-frontend
+          npm install
+          npm run build
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EE4B5A02556F4EFBA6DCBEB86A51FEC1 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_550DB2CE141F4357933F0E624CDF6AB2 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F984C52A958F46798E3243A02A6C0D92 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v4
+        with:
+          app-name: 'NiobiumFireChess'
