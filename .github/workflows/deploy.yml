@@ -28,6 +28,10 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: Install backend dependencies
+        run: |
+          pip install -r backend/requirements.txt
+
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -37,3 +41,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'NiobiumFireChess'
+          package: '.'
