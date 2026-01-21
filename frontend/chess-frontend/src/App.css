@@ -16,7 +16,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
   width: 100%;
   background: black;
 }
@@ -81,6 +81,7 @@ body {
   height: 100%;
   padding: 5px 10px;
   background-color: var(--main-bg-color);
+  color: white;
 }
 
 hr {

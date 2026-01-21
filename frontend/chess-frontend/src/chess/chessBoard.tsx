@@ -97,7 +97,7 @@ export function ChessBoard({
         throw new Error(`Invalid promotion value from engine: ${move.promotion}`);
       }
 
-      await new Promise((res) => setTimeout(res, 500)); // add small delay
+      await new Promise((res) => setTimeout(res, 200)); // add small delay
       tryMove(move.from, move.to, move.promotion);
     } catch (err) {
       console.error("Engine move failed:", err);
@@ -171,7 +171,7 @@ export function ChessBoard({
   const chessboardOptions = useMemo(
     () => ({
       boardStyle: {
-        backgroundColor: "#258f2eff",
+        backgroundColor: "rgb(124, 94, 54)",
       },
       darkSquareStyle: { backgroundColor: "#769656" },
       lightSquareStyle: { backgroundColor: "#eeeed2" },

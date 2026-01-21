@@ -97,6 +97,9 @@ cd frontend/chess-frontend
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 npm run dev
 
+or, to access over the network
+npm run dev -- --host
+
 ------ to test ------
 
 backend:
@@ -133,7 +136,7 @@ see last 10 commits: git log --oneline --decorate --graph -n 10
 see configured hooks path: git config --get core.hooksPath
 set hooks path: git config core.hooksPath .husky
 
------- deploy ------
+------ deploy (Azure) ------
 # 1. Create frontend build
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\build_frontend.ps1
@@ -143,9 +146,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 ------ docker ------
 # 1. Create image
-docker build -t chess-app .
+docker build -t niobiumfire/niobiumfirechess:latest .
 or
-docker build --no-cache -t chess-app .
+docker build --no-cache -t niobiumfire/niobiumfirechess:latest .
 
 # 2. Use Docker Desktop if necesary to browse image files
 
