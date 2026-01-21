@@ -140,3 +140,14 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # 2. Entire app served from fastAPI / backend
 
 # 3. Azure startup command: /home/site/wwwroot/startup.sh
+
+------ docker ------
+# 1. Create image
+docker build -t chess-app .
+or
+docker build --no-cache -t chess-app .
+
+# 2. Use Docker Desktop if necesary to browse image files
+
+# 3. Run from cmd
+docker run --rm -it -p 8000:8000 chess-app

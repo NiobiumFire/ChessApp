@@ -76,7 +76,7 @@ export function ChessBoard({
         skill_level: gameDetail.skillLevel
       };
 
-      const BACKEND_URL = import.meta.env.VITE_CHESSAPP_BACKEND_URL;
+      const BACKEND_URL = import.meta.env.VITE_CHESSAPP_BACKEND_URL || "";
 
       const response = await fetch(`${BACKEND_URL}/engine-move`, {
         method: "POST",
