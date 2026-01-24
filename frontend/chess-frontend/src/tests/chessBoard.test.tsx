@@ -29,6 +29,7 @@ vi.mock('@chess/chessGame', () => {
     ChessGame: class {
       getFEN = vi.fn(() => 'initial-fen');
       gameIsOver = vi.fn(() => 'false');
+      moveInvolvesPromotion = vi.fn(() => 'false')
       move = vi.fn(() => ({
         success: true,
         fen: 'after-move-fen',
@@ -85,9 +86,11 @@ describe('ChessBoard', () => {
     // ChessGame.move should have been called
     const instance = createdChessGame as {
       move: ReturnType<typeof vi.fn>;
+      moveInvolvesPromotion: ReturnType<typeof vi.fn>;
     };
     expect(createdChessGame).not.toBeNull();
-    expect(instance.move).toHaveBeenCalledWith('e2', 'e4', null);
+    expect(instance.moveInvolvesPromotion).toHaveBeenCalledWith('e2', 'e4');
+    expect(instance.move).toHaveBeenCalledWith('e2', 'e4', undefined);
 
     // Status should be updated
     expect(setStatus).toHaveBeenCalledTimes(1);

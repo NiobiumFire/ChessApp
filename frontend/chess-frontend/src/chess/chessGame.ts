@@ -1,13 +1,11 @@
 import { Chess } from "chess.js";
 import type { Square } from "chess.js";
-import { getPromotionPiece } from "@chess/promotion";
-import type { Promotion } from "@chess/promotion";
 
 export type MoveResult = {
   success: boolean;
   fen?: string;
   checkSquare?: Square | null;
-  status?: string
+  status?: string;
 };
 
 export class ChessGame {
@@ -29,28 +27,30 @@ export class ChessGame {
     return this.game.isGameOver();
   }
 
-  move(from: Square, to: Square, promotionPiece: string | null = null): MoveResult {
+  moveInvolvesPromotion(from: Square, to: Square): boolean {
+    const piece = this.game.get(from);
+    const isPawn = this.game.get(from)?.type === "p";
+    const rank = Number(to[1]);
+    const isLastRank =
+      (piece?.color === "w" && rank === 8) ||
+      (piece?.color === "b" && rank === 1);
+    const isLegalMove = this.game
+      .moves({ square: from })
+      .some((m) => m.includes(to));
+    return isPawn && isLastRank && isLegalMove;
+  }
+
+  move(from: Square, to: Square, promotion: string | undefined = undefined) : MoveResult {
     if (this.game.isGameOver()) return { success: false };
 
     const piece = this.game.get(from);
     if (!piece) return { success: false };
 
-    let promotion: Promotion | undefined;
-    if (promotionPiece === null) {
-      const result = getPromotionPiece(piece, to);
-      if (result === null) return { success: false }; // cancelled for null, undefined if no promotion needed
-      promotion = result;
-    }
-    else{
-      promotion = promotionPiece as Promotion;
-    }
-
     try {
-        const move = this.game.move({ from, to, promotion });
-        if (!move) return { success: false };
-    }
-    catch {
-        return { success: false };
+      const move = this.game.move({ from, to, promotion });
+      if (!move) return { success: false };
+    } catch {
+      return { success: false };
     }
 
     const sideToMove = this.game.turn();
@@ -62,19 +62,19 @@ export class ChessGame {
     let status: string;
 
     if (!this.game.isGameOver()) {
-      status = 'In Progress';
+      status = "In Progress";
     } else if (this.game.isCheckmate()) {
-      status = sideToMove === 'w' ? 'Black Wins' : 'White Wins';
+      status = sideToMove === "w" ? "Black Wins" : "White Wins";
     } else if (this.game.isDrawByFiftyMoves()) {
-      status = 'Draw (50 Moves)';
+      status = "Draw (50 Moves)";
     } else if (this.game.isStalemate()) {
-      status = 'Draw (Stalemate)';
+      status = "Draw (Stalemate)";
     } else if (this.game.isInsufficientMaterial()) {
-      status = 'Draw (Insufficient Material)';
+      status = "Draw (Insufficient Material)";
     } else if (this.game.isThreefoldRepetition()) {
-      status = 'Draw (Threefold Repetition)';
+      status = "Draw (Threefold Repetition)";
     } else {
-      status = 'Draw';
+      status = "Draw";
     }
 
     return {

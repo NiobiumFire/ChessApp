@@ -6,6 +6,8 @@ import type { Square } from "chess.js";
 import { getCheckSquareStyle, getMoveSquareStyle } from "@chess/squareStyles";
 import { ChessGame } from "@chess/chessGame";
 import type { GameDetail } from "@chess/gameDetail";
+import { getPromotionPiece } from "@chess/promotion";
+import type { Promotion } from "@chess/promotion";
 
 export function ChessBoard({
   gameDetail,
@@ -31,7 +33,7 @@ export function ChessBoard({
   //const [validMoveSquareStyle, setValidMoveSquareStyle] = useState<Record<string, CSSProperties>>({});
 
   const tryMove = useCallback(
-    (from: Square, to: Square, promotionPiece: string | null): boolean => {
+    (from: Square, to: Square, promotionPiece: string | undefined): boolean => {
       if (!from || !to) return false;
 
       if (!chessGame.current) return false;
@@ -93,8 +95,10 @@ export function ChessBoard({
 
       const move = await response.json();
 
-      if (move?.promotion && !['n','b','r','q'].includes(move.promotion)) {
-        throw new Error(`Invalid promotion value from engine: ${move.promotion}`);
+      if (move?.promotion && !["n", "b", "r", "q"].includes(move.promotion)) {
+        throw new Error(
+          `Invalid promotion value from engine: ${move.promotion}`
+        );
       }
 
       await new Promise((res) => setTimeout(res, 200)); // add small delay
@@ -114,7 +118,12 @@ export function ChessBoard({
       const from = sourceSquare as Square;
       const to = targetSquare as Square;
 
-      const result = tryMove(from, to, null);
+      let promotion: Promotion | undefined = undefined;
+      if (chessGame.current?.moveInvolvesPromotion(from, to)) {
+        promotion = getPromotionPiece();
+      }
+
+      const result = tryMove(from, to, promotion);
       setAllowDragging(!result);
 
       return result;
@@ -141,8 +150,12 @@ export function ChessBoard({
       setAllowDragging(false);
       return;
     }
-    if (chessGame.current.getTurn() === gameDetail.colour || enginePending.current) return;
-      
+    if (
+      chessGame.current.getTurn() === gameDetail.colour ||
+      enginePending.current
+    )
+      return;
+
     let cancelled = false;
     enginePending.current = true;
 
@@ -152,8 +165,9 @@ export function ChessBoard({
         setAllowDragging(!chessGame.current!.gameIsOver());
       }
     });
-    
-    return () => { // prevent possible state update after unmount during engine request
+
+    return () => {
+      // prevent possible state update after unmount during engine request
       cancelled = true;
     };
   }, [gameDetail.colour, requestEngineMove, chessPosition]);
@@ -185,7 +199,5 @@ export function ChessBoard({
     [chessPosition, handleDrop, customSquareStyles, orientation, allowDragging]
   );
 
-  return (
-      <Chessboard options={chessboardOptions} />
-  );
+  return <Chessboard options={chessboardOptions} />;
 }
