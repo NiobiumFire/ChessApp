@@ -173,7 +173,7 @@ export function ChessBoard({
       boardStyle: {
         backgroundColor: "rgb(124, 94, 54)",
       },
-      darkSquareStyle: { backgroundColor: "#769656" },
+      darkSquareStyle: { backgroundColor: "var(--main-bg-colour)" },
       lightSquareStyle: { backgroundColor: "#eeeed2" },
       position: chessPosition,
       onPieceDrop: handleDrop,

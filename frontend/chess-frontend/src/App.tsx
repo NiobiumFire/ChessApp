@@ -28,17 +28,17 @@ export default function App() {
           <ChessBoard gameDetail = { gameDetail } setStatus = { setGameStatus }/>
         </div>
         <div className="info-panel">
+          <p>Status: { gameStatus }</p>
+          <hr />
           <p>New Game</p>
           <div className="new-game-buttons">
-            <button onClick={() => newGame('w')}>White</button>
-            <button onClick={() => newGame(Math.random() < 0.5 ? 'w' : 'b')}>Random</button>
-            <button onClick={() => newGame('b')}>Black</button>
+            <button type='button' onClick={() => newGame('w')}>White</button>
+            <button type='button' onClick={() => newGame(Math.random() < 0.5 ? 'w' : 'b')}>Random</button>
+            <button type='button' onClick={() => newGame('b')}>Black</button>
           </div>
           <hr />
           <p>AI Skill: {gameDetail.skillLevel}</p>
           <input className="skill-slider" type="range" id="skill" name="skill" min="-1" max="20" value={gameDetail.skillLevel} onChange={(e) => updateGame({ skillLevel: Number(e.target.value) })} />
-          <hr />
-          <p>Status: { gameStatus }</p>
         </div>
       </div>
     </div>
