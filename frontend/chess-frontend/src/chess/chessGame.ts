@@ -29,7 +29,7 @@ export class ChessGame {
 
   moveInvolvesPromotion(from: Square, to: Square): boolean {
     const piece = this.game.get(from);
-    const isPawn = this.game.get(from)?.type === "p";
+    const isPawn = piece?.type === "p";
     const rank = Number(to[1]);
     const isLastRank =
       (piece?.color === "w" && rank === 8) ||

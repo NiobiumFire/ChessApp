@@ -6,7 +6,7 @@ import type { Square } from "chess.js";
 import { getCheckSquareStyle, getMoveSquareStyle } from "@chess/squareStyles";
 import { ChessGame } from "@chess/chessGame";
 import type { GameDetail } from "@chess/gameDetail";
-import { getPromotionPiece } from "@chess/promotion";
+import { getPromotionPieceFromPrompt } from "@chess/promotion";
 import type { Promotion } from "@chess/promotion";
 
 export function ChessBoard({
@@ -120,7 +120,7 @@ export function ChessBoard({
 
       let promotion: Promotion | undefined = undefined;
       if (chessGame.current?.moveInvolvesPromotion(from, to)) {
-        promotion = getPromotionPiece();
+        promotion = getPromotionPieceFromPrompt();
       }
 
       const result = tryMove(from, to, promotion);

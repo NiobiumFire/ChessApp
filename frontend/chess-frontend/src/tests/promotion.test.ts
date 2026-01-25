@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { getPromotionPiece } from '@chess/promotion';
+import { getPromotionPieceFromPrompt } from '@chess/promotion';
 
 describe('getPromotionPiece', () => {
   const originalPrompt = globalThis.prompt;
@@ -10,16 +10,16 @@ describe('getPromotionPiece', () => {
 
   it('returns null if user cancels', () => {
     globalThis.prompt = vi.fn(() => null);
-    expect(getPromotionPiece()).toBeUndefined();
+    expect(getPromotionPieceFromPrompt()).toBeUndefined();
   });
 
   it('returns null if user inputs invalid piece', () => {
     globalThis.prompt = vi.fn(() => 'k');
-    expect(getPromotionPiece()).toBeUndefined();
+    expect(getPromotionPieceFromPrompt()).toBeUndefined();
   });
 
   it('returns \'r\' for captial input with spaces', () => {
     globalThis.prompt = vi.fn(() => ' R ');
-    expect(getPromotionPiece()).toBe('r');
+    expect(getPromotionPieceFromPrompt()).toBe('r');
   });
 });

@@ -58,7 +58,7 @@ body {
   min-height: 0;
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1200px) {
   .h-container {
     grid-template-rows: none;
     grid-template-columns: 4fr 8fr 4fr;
