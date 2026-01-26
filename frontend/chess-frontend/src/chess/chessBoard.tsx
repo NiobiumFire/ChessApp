@@ -6,8 +6,8 @@ import type { Square } from "chess.js";
 import { getCheckSquareStyle, getMoveSquareStyle } from "@chess/squareStyles";
 import { ChessGame } from "@chess/chessGame";
 import type { GameDetail } from "@chess/gameDetail";
-import { getPromotionPieceFromPrompt } from "@chess/promotion";
-import type { Promotion } from "@chess/promotion";
+import { usePromotion } from "@chess/usePromotion";
+import { PromotionModal } from "@chess/promotionModal";
 
 export function ChessBoard({
   gameDetail,
@@ -30,6 +30,7 @@ export function ChessBoard({
     Record<string, CSSProperties>
   >({});
   const [allowDragging, setAllowDragging] = useState(true);
+  const [promotionSquare, setPromotionSquare] = useState<string | null>(null);
   //const [validMoveSquareStyle, setValidMoveSquareStyle] = useState<Record<string, CSSProperties>>({});
 
   const tryMove = useCallback(
@@ -108,6 +109,8 @@ export function ChessBoard({
     }
   }, [gameDetail.colour, gameDetail.skillLevel, tryMove]);
 
+  const { requestPromotion, promotionResolverFunction } = usePromotion();
+
   // drag and drop piece to move
   const handleDrop = useCallback(
     (args: PieceDropHandlerArgs): boolean => {
@@ -118,17 +121,20 @@ export function ChessBoard({
       const from = sourceSquare as Square;
       const to = targetSquare as Square;
 
-      let promotion: Promotion | undefined = undefined;
       if (chessGame.current?.moveInvolvesPromotion(from, to)) {
-        promotion = getPromotionPieceFromPrompt();
+        setPromotionSquare(targetSquare);
+        requestPromotion().then(p => {
+          if (p) tryMove(from, to, p);
+        });
+        return false; // exit immediately and resolve -> tryMove is called through the modal after promise resolution
       }
 
-      const result = tryMove(from, to, promotion);
+      const result = tryMove(from, to, undefined); // normal move without promotion
       setAllowDragging(!result);
 
       return result;
     },
-    [tryMove]
+    [tryMove, requestPromotion]
   );
 
   // reset game and board
@@ -199,5 +205,10 @@ export function ChessBoard({
     [chessPosition, handleDrop, customSquareStyles, orientation, allowDragging]
   );
 
-  return <Chessboard options={chessboardOptions} />;
+  return (
+    <>
+      <Chessboard options={chessboardOptions} />
+      <PromotionModal promotionResolverFunction={ promotionResolverFunction } promotionSquare={ promotionSquare } colour={gameDetail.colour} />
+    </>
+  );
 }

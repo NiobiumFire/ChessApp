@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
-//import { ChessGame } from '@chess/chessGame';
 import { ChessBoard } from '@chess/chessBoard';
 
 import type { GameDetail } from "@chess/gameDetail";
@@ -28,8 +27,8 @@ vi.mock('@chess/chessGame', () => {
   return {
     ChessGame: class {
       getFEN = vi.fn(() => 'initial-fen');
-      gameIsOver = vi.fn(() => 'false');
-      moveInvolvesPromotion = vi.fn(() => 'false')
+      gameIsOver = vi.fn(() => true); // true prevents the test trying to call the engine to repond to a move
+      moveInvolvesPromotion = vi.fn(() => false)
       move = vi.fn(() => ({
         success: true,
         fen: 'after-move-fen',
@@ -95,5 +94,44 @@ describe('ChessBoard', () => {
     // Status should be updated
     expect(setStatus).toHaveBeenCalledTimes(1);
     expect(setStatus).toHaveBeenCalledWith('In Progress');
+  });
+
+  it('handles promotion correctly', async () => {
+    const instance = createdChessGame as {
+        move: ReturnType<typeof vi.fn>;
+        moveInvolvesPromotion: ReturnType<typeof vi.fn>;
+    };
+
+    instance.moveInvolvesPromotion.mockReturnValue(true);
+
+    const fakeSquare = document.createElement("div");
+    fakeSquare.getBoundingClientRect = () =>
+      ({
+        left: 100,
+        top: 100,
+        bottom: 200,
+        width: 50,
+        height: 50,
+      } as DOMRect);
+
+    vi.spyOn(document, "querySelector").mockImplementation((selector: string) => {
+      if (selector.includes("data-square")) return fakeSquare;
+      return null;
+    });
+
+    const result = mockChessboardProps!.options.onPieceDrop!({
+      sourceSquare: "e7",
+      targetSquare: "e8",
+    });
+
+    expect(instance.moveInvolvesPromotion).toHaveBeenCalled();
+    expect(result).toBe(false); // promotion move returns false immediately from handleDrop and the promotion modal subsequently triggers tryMove
+
+    const knightButton = await screen.findByRole("button", { name: "Promote to N" });
+    expect(knightButton).toBeInTheDocument();
+    knightButton.click();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(instance.move).toHaveBeenCalledWith("e7", "e8", "n");
   });
 });
