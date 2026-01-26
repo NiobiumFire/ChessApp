@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "baseUrl": "src",
     "paths": {
-      "@chess/*": ["chess/*"]
+      "@chess/*": ["chess/*"],
+      "@assets/*": ["assets/*"]
     },
 
     /* Bundler mode */

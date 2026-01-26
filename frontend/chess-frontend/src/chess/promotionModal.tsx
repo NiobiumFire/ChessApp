@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Promotion } from "@chess/usePromotion";
+import { promotionImages } from "@chess/promotionPieces"
 
 type Anchor = { left: number; top: number; width: number };
 
@@ -36,7 +37,7 @@ export function PromotionModal({ promotionResolverFunction, promotionSquare, col
                 {(["n", "b", "r", "q"] as Promotion[]).map((p) => (
                     <button key={p} onClick={() => { promotionResolverFunction(p) }} aria-label={`Promote to ${p.toUpperCase()}`}>
                         <img
-                            src={`src/assets/pieces/${colour}${p}.svg`}
+                            src={promotionImages[colour][p]}
                             alt={p.toUpperCase()}
                             className="promotion-piece-img"
                         />
